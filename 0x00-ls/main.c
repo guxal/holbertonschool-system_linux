@@ -13,12 +13,9 @@ void ErrorHandler(char *path)
 		fprintf(stderr, "hls: cannot access %s: No such file or directory\n", path);
 		break;
 	case EACCES:
-		fprintf(stderr, "hls: cannot access %s: Permission denied\n", path);
+		fprintf(stderr, "hls: cannot open directory %s: Permission denied", path);
 		break;
-	default:
-		fprintf(stderr, "hls: cannot access %s: No such file or directory\n", path);
-		break;
-	}
+	}	
 }
 
 /**
