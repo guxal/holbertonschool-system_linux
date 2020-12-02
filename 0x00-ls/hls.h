@@ -3,5 +3,6 @@
 /*--- C libs ---*/
 #include <stdio.h>
 #include <dirent.h>
-
+#include <errno.h> 
+#include <stdlib.h>
 #endif
