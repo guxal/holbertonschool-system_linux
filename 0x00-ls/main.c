@@ -39,13 +39,13 @@ void printLs(DIR *dir, char *path, int count, int flag)
 	if (dir == NULL)
 	{
 		ErrorHandler(path);
-		exit(EXIT_FAILURE);
+		return;
 	}
 	if (flag != 1)
 		printf("%s:\n", path);
 	while ((read = readdir(dir)) != NULL)
-	if (read->d_name[0] != '.')
-		printf("%s ", read->d_name);
+		if (read->d_name[0] != '.')
+			printf("%s ", read->d_name);
 	printf("\n");
 
 	if (count != 1)
