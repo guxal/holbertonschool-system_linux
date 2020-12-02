@@ -9,9 +9,6 @@ void ErrorHandler(char *path)
 {
 	switch (errno)
 	{
-	case EPERM:
-		fprintf(stderr, "hls: cannot access %s: Operation not permitted\n", path);
-		break;
 	case ENOENT:
 		fprintf(stderr, "hls: cannot access %s: No such file or directory\n", path);
 		break;
@@ -19,7 +16,7 @@ void ErrorHandler(char *path)
 		fprintf(stderr, "hls: cannot access %s: Permission denied\n", path);
 		break;
 	default:
-		fprintf(stderr, "hls: cannot access %s\n", path);
+		fprintf(stderr, "hls: cannot access %s: No such file or directory\n", path);
 		break;
 	}
 }
@@ -32,14 +29,14 @@ void ErrorHandler(char *path)
  * @flag: flag for each case
  * Return: (Not Return)
  */
-void printLs(DIR *dir, char *path, int count, int flag)
+unsigned int printLs(DIR *dir, char *path, int count, int flag)
 {
 	struct dirent *read;
 
 	if (dir == NULL)
 	{
 		ErrorHandler(path);
-		return;
+		return (2);
 	}
 	if (flag != 1)
 		printf("%s:\n", path);
@@ -52,6 +49,8 @@ void printLs(DIR *dir, char *path, int count, int flag)
 		printf("\n");
 
 	closedir(dir);
+
+	return (0);
 }
 
 /**
@@ -65,13 +64,17 @@ int main(int argc, char *argv[])
 	DIR *dir;
 
 	int saveArgc = argc;
+	int result = 0;
+	int tmp = 0;
 
 	if (argc > 2)
 	{
 		while (--argc)
 		{
 			dir = opendir(argv[argc]);
-			printLs(dir, argv[argc], argc, 0);
+			tmp = printLs(dir, argv[argc], argc, 0);
+			if (tmp != 0)
+				result = tmp;
 		}
 	}
 
@@ -82,8 +85,8 @@ int main(int argc, char *argv[])
 			dir = opendir(".");
 		else
 			dir = opendir(argv[1]);
-		printLs(dir, argv[1], 1, 1);
+		result = printLs(dir, argv[1], 1, 1);
 	}
 
-	return (0);
+	return (result);
 }
