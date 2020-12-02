@@ -7,15 +7,13 @@
  */
 void ErrorHandler(char *path)
 {
-	switch (errno)
-	{
-	case ENOENT:
-		fprintf(stderr, "hls: cannot access %s: No such file or directory\n", path);
-		break;
-	case EACCES:
-		fprintf(stderr, "hls: cannot open directory %s: Permission denied", path);
-		break;
-	}	
+	char buf[BUFSIZ];
+
+	if (errno == ENOENT)
+		sprintf(buf, "hls: cannot access %s", path);
+	else if (errno == EACCES)
+		sprintf(buf, "hls: cannot open directory %s", path);
+	perror(buf);
 }
 
 /**
