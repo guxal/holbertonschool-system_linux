@@ -105,7 +105,6 @@ unsigned int printLs(DIR *dir, char *p, int c, int f, Option *options)
 int main(int argc, char *argv[])
 {
 	DIR *dir;
-	int saveArgc = argc;
 	int result = 0;
 	int tmp = 0;
 	int flag = 0;
@@ -140,7 +139,7 @@ int main(int argc, char *argv[])
 		inc++, runtime = 2;
 	}
 	/* if not pass paths and if pass options and not paths */
-	if (argc == 1 && (inc - argc) == 0 || runtime < 2)
+	if ((argc == 1 && (inc - argc) == 0) || runtime < 2)
 		dir = opendir("."), result = printLs(dir, argv[1], 1, 1, &options);
 	return (result);
 }
