@@ -27,6 +27,7 @@ void ErrorHandler(char *path)
 unsigned int printLs(DIR *dir, char *path, int count, int flag)
 {
 	struct dirent *read;
+	int sp = 0;
 
 	if (dir == NULL)
 	{
@@ -36,8 +37,15 @@ unsigned int printLs(DIR *dir, char *path, int count, int flag)
 	if (flag != 1)
 		printf("%s:\n", path);
 	while ((read = readdir(dir)) != NULL)
-		if (read->d_name[0] != '.')
-			printf("%s ", read->d_name);
+	{
+		if (read->d_name[0] == '.')
+			continue;
+		if (sp != 1)
+			printf("%s", read->d_name);
+		else
+			printf(" %s", read->d_name);
+		sp = 1;
+	}
 	printf("\n");
 
 	if (count != 1)
