@@ -2,7 +2,7 @@
 
 
 /**
- * setOptions - setter options to struct 
+ * setOptions - setter options to struct
  * @option: struct options
  * @param: char params
  * Return: (Not Return)
@@ -19,7 +19,7 @@ void setOptions(Option *option, char param)
 	case 'a':
 		option->hidden = 1;
 		break;
-	
+
 	default:
 		/**error mal parametro */
 		perror("parameter invalid");
@@ -47,36 +47,35 @@ void ErrorHandler(char *path)
 /**
  * printLs - Print Ls Data
  * @dir: directory
- * @path: path
- * @count: count argc
- * @flag: flag for each case
+ * @p: path for errors and output
+ * @c: count paths argc desc
+ * @f: flag for each case
+ * @options: object with options
  * Return: (Not Return)
  */
-unsigned int printLs(DIR *dir, char *path, int count, int flag, Option *options)
+unsigned int printLs(DIR *dir, char *p, int c, int f, Option *options)
 {
 	struct dirent *read;
-	// static int call = 1;
+
 	int sp = 0; /* spaces inline */
 	int nl = 0; /* new line */
 
 	if (dir == NULL)
 	{
-		ErrorHandler(path);
+		ErrorHandler(p);
 		return (2);
 	}
 
-	if (flag != 1)
-		printf("%s:\n", path);
+	if (f != 1)
+		printf("%s:\n", p);
 
 	while ((read = readdir(dir)) != NULL)
 	{
 		/* manejo del programa por medio de condicionales */
-
-		if (read->d_name[0] == '.' && options->hidden == 0)  /* leer o no leer hiden files */
+		/* leer o no leer hiden files */
+		if (read->d_name[0] == '.' && options->hidden == 0)
 			continue;
-
 		/* en linea o con separacion */
-
 		if (options->vertical == 1)
 		{
 			printf("%s\n", read->d_name);
@@ -84,24 +83,16 @@ unsigned int printLs(DIR *dir, char *path, int count, int flag, Option *options)
 		{
 			if (sp == 0)
 				printf("%s", read->d_name);
-
 			else if (sp == 1)
 				printf(" %s", read->d_name);
 			sp = 1;
-		}
-		nl = 1;
+		} nl = 1;
 	}
 	if (options->vertical == 0 && nl == 1)
 		printf("\n");
-
-	if (count != 1)
-	//if(call >= 2)
+	if (c != 1)
 		printf("\n");
-	
-	//printf("count %d\n", count);
 	closedir(dir);
-	// printf("call: %d\n", call);
-	//++call;
 	return (0);
 }
 
@@ -114,55 +105,42 @@ unsigned int printLs(DIR *dir, char *path, int count, int flag, Option *options)
 int main(int argc, char *argv[])
 {
 	DIR *dir;
-
 	int saveArgc = argc;
 	int result = 0;
 	int tmp = 0;
 	int flag = 0;
 	int runtime = 0;
-	// char *path = ".";
 	Option options = OPTION_INIT;
-
 	/** while options */
 	int inc = 1;
+
 	while (inc != argc)
 	{
-
 		if (argv[inc][0] == '-' && argv[inc][1] != 0)
-		//if (**argv == '-' && *(*args + 1))
+		/* if (**argv == '-' && *(*args + 1)) */
 		{
-			// printf("param: %c\n", argv[inc][0]);
 			/* añadir configuracion */
 			setOptions(&options, argv[inc][1]);
 			inc++;
 			runtime = 1;
-		} else {
+		} else
+		{
 			break;
 		}
 	}
-	// printf("argc: %d", argc);
-	/** while paths */
+	/** if more two paths is 0 else 1 */
 	flag = (argc - inc) == 1;
-	//printf("rest: %d\n", (argc - inc));
-	//printf("flag: %d\n", flag);
-
+	/** while paths */
 	while (inc != argc)
 	{
 		dir = opendir(argv[inc]);
 		tmp = printLs(dir, argv[inc], (argc - inc), flag, &options);
 		if (tmp != 0)
 			result = tmp;
-		inc++;
-		runtime = 2;
+		inc++, runtime = 2;
 	}
-	// if not pass paths 
-	//printf("runtime : %d\n", runtime);
-	// and if pass options and not paths
+	/* if not pass paths and if pass options and not paths */
 	if (argc == 1 && (inc - argc) == 0 || runtime < 2)
-	{
-		dir = opendir(".");
-		result = printLs(dir, argv[1], 1, 1, &options);
-	}
-
+		dir = opendir("."), result = printLs(dir, argv[1], 1, 1, &options);
 	return (result);
 }
