@@ -7,24 +7,28 @@
  * @param: char params
  * Return: (Not Return)
  */
-void setOptions(Option *option, char param)
+void setOptions(Option *option, char *param)
 {
-	switch (param)
+	while (*++param)
 	{
-	case '1':
-		/* code */
-		option->vertical = 1;
-		break;
+		switch (*param)
+		{
+		case '1':
+			/* code */
+			option->vertical = 1;
+			break;
 
-	case 'a':
-		option->hidden = 1;
-		break;
+		case 'a':
+			option->hidden = 1;
+			break;
 
-	default:
-		/**error mal parametro */
-		perror("parameter invalid");
-		exit(2);
-		break;
+		default:
+			/**error mal parametro */
+			fprintf(stderr, "hls: invalid option -- '%c'\n", *param);
+			fprintf(stderr, "Try '%s --help' for more information.\n", "ls");
+			exit(2);
+			break;
+		}
 	}
 }
 
@@ -119,7 +123,7 @@ int main(int argc, char *argv[])
 		/* if (**argv == '-' && *(*args + 1)) */
 		{
 			/* añadir configuracion */
-			setOptions(&options, argv[inc][1]);
+			setOptions(&options, argv[inc]);
 			inc++;
 			runtime = 1;
 		} else
