@@ -15,9 +15,10 @@ typedef struct Option
 {
 	int vertical;
 	int hidden;
+	int fullhidden;
 
 } Option;
 
-#define OPTION_INIT {0, 0}
+#define OPTION_INIT {0, 0, 0}
 
 #endif

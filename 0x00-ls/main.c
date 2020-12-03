@@ -13,21 +13,25 @@ void setOptions(Option *option, char *param)
 	{
 		switch (*param)
 		{
-		case '1':
-			/* code */
-			option->vertical = 1;
-			break;
+			case '1':
+				/* code */
+				option->vertical = 1;
+				break;
 
-		case 'a':
-			option->hidden = 1;
-			break;
+			case 'a':
+				option->hidden = 1;
+				break;
 
-		default:
-			/**error mal parametro */
-			fprintf(stderr, "hls: invalid option -- '%c'\n", *param);
-			fprintf(stderr, "Try '%s --help' for more information.\n", "ls");
-			exit(2);
-			break;
+			case 'A':
+				option->fullhidden = 1;
+				break;
+
+			default:
+				/**error mal parametro */
+				fprintf(stderr, "hls: invalid option -- '%c'\n", *param);
+				fprintf(stderr, "Try '%s --help' for more information.\n", "ls");
+				exit(2);
+				break;
 		}
 	}
 }
@@ -60,26 +64,27 @@ void ErrorHandler(char *path)
 unsigned int printLs(DIR *dir, char *p, int c, int f, Option *options)
 {
 	struct dirent *read;
-
-	int sp = 0; /* spaces inline */
-	int nl = 0; /* new line */
+	int sp = 0, nl = 0;
 
 	if (dir == NULL)
 	{
 		ErrorHandler(p);
 		return (2);
 	}
-
 	if (f != 1)
 		printf("%s:\n", p);
-
 	while ((read = readdir(dir)) != NULL)
 	{
-		/* manejo del programa por medio de condicionales */
-		/* leer o no leer hiden files */
 		if (read->d_name[0] == '.' && options->hidden == 0)
-			continue;
-		/* en linea o con separacion */
+		{
+			if (read->d_name[1] != '.'
+				&& read->d_name[1] != 0
+				&& options->fullhidden == 1)
+			{
+			}
+			else
+				continue;
+		}
 		if (options->vertical == 1)
 		{
 			printf("%s\n", read->d_name);
