@@ -116,31 +116,33 @@ int main(int argc, char *argv[])
 	Option options = OPTION_INIT;
 	/** while options */
 	int inc = 1;
+	int inc2 = 1;
+	int numberpaths = 1;
 
 	while (inc != argc)
 	{
 		if (argv[inc][0] == '-' && argv[inc][1] != 0)
-		/* if (**argv == '-' && *(*args + 1)) */
 		{
-			/* añadir configuracion */
 			setOptions(&options, argv[inc]);
-			inc++;
 			runtime = 1;
-		} else
-		{
-			break;
-		}
+			inc2++;
+		} inc++;
 	}
 	/** if more two paths is 0 else 1 */
-	flag = (argc - inc) == 1;
+	flag = (argc - inc2) == 1, numberpaths = (argc - inc2) + 1;
 	/** while paths */
+	inc = 1, inc2 = 1;
 	while (inc != argc)
 	{
-		dir = opendir(argv[inc]);
-		tmp = printLs(dir, argv[inc], (argc - inc), flag, &options);
+		if (argv[inc][0] == '-' && argv[inc][1] != 0)
+		{
+			inc++;
+			continue;
+		} dir = opendir(argv[inc]);
+		tmp = printLs(dir, argv[inc], (numberpaths - inc2), flag, &options);
 		if (tmp != 0)
 			result = tmp;
-		inc++, runtime = 2;
+		inc++, runtime = 2, inc2++;
 	}
 	/* if not pass paths and if pass options and not paths */
 	if ((argc == 1 && (inc - argc) == 0) || runtime < 2)
