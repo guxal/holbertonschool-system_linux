@@ -6,4 +6,18 @@
 #include <errno.h>
 #include <stdlib.h>
 
+/**
+ * struct Option - Options send for user
+ * @vertical: is vertical options
+ * @hidden: show hidden files
+ */
+typedef struct Option
+{
+	int vertical;
+	int hidden;
+
+} Option;
+
+#define OPTION_INIT {0, 0}
+
 #endif
