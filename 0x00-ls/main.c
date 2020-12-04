@@ -39,9 +39,9 @@ void setOptions(Option *option, char *param)
 /**
  * ErrorHandler - Handler Error
  * @path: path
- * Return: (Not Return)
+ * Return: 2
  */
-void ErrorHandler(char *path)
+unsigned int ErrorHandler(char *path)
 {
 	char buf[BUFSIZ];
 
@@ -50,6 +50,7 @@ void ErrorHandler(char *path)
 	else if (errno == EACCES)
 		sprintf(buf, "hls: cannot open directory %s", path);
 	perror(buf);
+	return (2);
 }
 
 /**
@@ -71,7 +72,7 @@ void printInline(char *p, int sp)
  * @c: count paths argc desc
  * @f: flag for each case
  * @options: object with options
- * Return: (Not Return)
+ * Return: 0 Success or 2 Error
  */
 unsigned int printLs(char *p, int c, int f, Option *options)
 {
@@ -81,16 +82,15 @@ unsigned int printLs(char *p, int c, int f, Option *options)
 	struct stat st;
 
 	if (lstat(p, &st) == -1)
-	{
-		ErrorHandler(p);
-		return (2);
-	}
+		return (ErrorHandler(p));
 	if (S_ISREG(st.st_mode))
 	{
 		printf("%s\n", p);
 		return (0);
 	}
 	dir = opendir(p);/* open path */
+	if (dir == NULL)
+		return (ErrorHandler(p));
 	if (f != 1)
 		printf("%s:\n", p);
 	while ((read = readdir(dir)) != NULL)
