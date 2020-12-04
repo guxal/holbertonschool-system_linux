@@ -54,18 +54,19 @@ void ErrorHandler(char *path)
 
 /**
  * printLs - Print Ls Data
- * @dir: directory
  * @p: path for errors and output
  * @c: count paths argc desc
  * @f: flag for each case
  * @options: object with options
  * Return: (Not Return)
  */
-unsigned int printLs(DIR *dir, char *p, int c, int f, Option *options)
+unsigned int printLs(char *p, int c, int f, Option *options)
 {
 	struct dirent *read;
 	int sp = 0, nl = 0;
+	DIR *dir;
 
+	dir = opendir(p);/* open path */
 	if (dir == NULL)
 	{
 		ErrorHandler(p);
@@ -77,11 +78,9 @@ unsigned int printLs(DIR *dir, char *p, int c, int f, Option *options)
 	{
 		if (read->d_name[0] == '.' && options->hidden == 0)
 		{
-			if (read->d_name[1] != '.'
-				&& read->d_name[1] != 0
+			if (read->d_name[1] != '.' && read->d_name[1] != 0
 				&& options->fullhidden == 1)
-			{
-			}
+			{}
 			else
 				continue;
 		}
@@ -113,7 +112,6 @@ unsigned int printLs(DIR *dir, char *p, int c, int f, Option *options)
  */
 int main(int argc, char *argv[])
 {
-	DIR *dir;
 	int result = 0;
 	int tmp = 0;
 	int flag = 0;
@@ -143,14 +141,14 @@ int main(int argc, char *argv[])
 		{
 			inc++;
 			continue;
-		} dir = opendir(argv[inc]);
-		tmp = printLs(dir, argv[inc], (numberpaths - inc2), flag, &options);
+		}
+		tmp = printLs(argv[inc], (numberpaths - inc2), flag, &options);
 		if (tmp != 0)
 			result = tmp;
 		inc++, runtime = 2, inc2++;
 	}
 	/* if not pass paths and if pass options and not paths */
 	if ((argc == 1 && (inc - argc) == 0) || runtime < 2)
-		dir = opendir("."), result = printLs(dir, argv[1], 1, 1, &options);
+		result = printLs(".", 1, 1, &options);
 	return (result);
 }
