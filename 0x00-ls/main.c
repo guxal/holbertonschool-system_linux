@@ -53,6 +53,19 @@ void ErrorHandler(char *path)
 }
 
 /**
+ * printInline - print inline
+ * @p: path
+ * @sp: space
+ */
+void printInline(char *p, int sp)
+{
+	if (sp == 0)
+		printf("%s", p);
+	else if (sp == 1)
+		printf(" %s", p);
+}
+
+/**
  * printLs - Print Ls Data
  * @p: path for errors and output
  * @c: count paths argc desc
@@ -65,13 +78,19 @@ unsigned int printLs(char *p, int c, int f, Option *options)
 	struct dirent *read;
 	int sp = 0, nl = 0;
 	DIR *dir;
+	struct stat st;
 
-	dir = opendir(p);/* open path */
-	if (dir == NULL)
+	if (lstat(p, &st) == -1)
 	{
 		ErrorHandler(p);
 		return (2);
 	}
+	if (S_ISREG(st.st_mode))
+	{
+		printf("%s\n", p);
+		return (0);
+	}
+	dir = opendir(p);/* open path */
 	if (f != 1)
 		printf("%s:\n", p);
 	while ((read = readdir(dir)) != NULL)
@@ -85,16 +104,10 @@ unsigned int printLs(char *p, int c, int f, Option *options)
 				continue;
 		}
 		if (options->vertical == 1)
-		{
 			printf("%s\n", read->d_name);
-		} else
-		{
-			if (sp == 0)
-				printf("%s", read->d_name);
-			else if (sp == 1)
-				printf(" %s", read->d_name);
-			sp = 1;
-		} nl = 1;
+		else
+			printInline(read->d_name, sp), sp = 1;
+		nl = 1;
 	}
 	if (options->vertical == 0 && nl == 1)
 		printf("\n");
