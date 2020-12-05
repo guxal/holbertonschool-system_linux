@@ -67,6 +67,9 @@ int main(int argc, char *argv[])
 		inc++;
 	}
 
+	if (result == 2)
+		printdata->countdir++;
+
 	/*print lists */
 	count_listfile = print_list_file(printdata->listfile, &options);
 	count_listdir = print_list_dir(printdata->listdir, printdata, &options);
