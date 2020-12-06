@@ -54,6 +54,7 @@ typedef struct listfile_s
  * @listfile: show hidden files
  * @countdir: counter of dir
  * @countfile: counter of file
+ * @result: counter of result
  * @next: points to the next node
  */
 typedef struct printdata_s
@@ -62,6 +63,7 @@ typedef struct printdata_s
 	listfile_t *listfile;
 	int countdir;
 	int countfile;
+	int result;
 	struct printdata_s *next;
 } printdata_t;
 

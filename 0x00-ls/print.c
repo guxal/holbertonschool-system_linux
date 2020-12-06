@@ -10,7 +10,7 @@ void printInline(char *p, int sp)
 	if (sp == 0)
 		printf("%s", p);
 	else if (sp == 1)
-		printf(" %s", p);
+		printf("  %s", p);
 }
 
 
@@ -73,7 +73,7 @@ int print_list_dir(const listdir_t *h, printdata_t *printdata,
 	initPrint(printdata, options);
 	while (h)
 	{
-		if ((printdata->countdir + printdata->countfile) > 1)
+		if ((printdata->countdir + printdata->countfile + printdata->result) > 1)
 			printf("%s:\n", h->path);
 		sp = 0, nl = 0;
 		while ((read = readdir(h->dir)) != NULL)
