@@ -27,8 +27,10 @@ int print_list_file(const listfile_t *h, option_t *options)
 
 	while (h != NULL)
 	{
-		if (options->vertical == 1)
+		if (options->vertical == 1 && options->fulldata == 0)
 			printf("%s\n", h->file);
+		else if (options->vertical >= 0 && options->fulldata == 1)
+			printLongListing(h->sb, h->file, h->file);
 		else
 			printInline(h->file, sp), sp = 1;
 		h = h->next;
@@ -46,13 +48,13 @@ int print_list_file(const listfile_t *h, option_t *options)
 void initPrint(printdata_t *printdata, option_t *options)
 {
 	if (printdata->countfile >= 1 && printdata->countdir == 0
-		&& options->vertical == 0)
+		&& options->vertical == 0 && options->fulldata == 0)
 		printf("\n");
 	else if (printdata->countfile >= 1 && printdata->countdir >= 1
 		&& options->vertical == 0)
 		printf("\n\n");
 	else if (printdata->countfile >= 1 && printdata->countdir >= 1
-		&& options->vertical == 1)
+		&& options->vertical == 1 && options->fulldata == 1)
 		printf("\n");
 }
 
@@ -68,6 +70,7 @@ int print_list_dir(const listdir_t *h, printdata_t *printdata,
 {
 	size_t count = 0;
 	read_t *read;
+	struct stat st;
 	int sp, nl = 0;
 
 	initPrint(printdata, options);
@@ -89,16 +92,56 @@ int print_list_dir(const listdir_t *h, printdata_t *printdata,
 				else
 					continue;
 			}
-			if (options->vertical == 1)
+			if (options->vertical == 1 && options->fulldata == 0)
 				printf("%s\n", read->d_name);
+			else if (options->vertical >= 0 && options->fulldata == 1)
+				lstat(read->d_name, &st), printLongListing(st, read->d_name, h->path);
 			else
 				printInline(read->d_name, sp), sp = 1;
 			nl = 1;
 		}
-		if (options->vertical == 0 && nl == 1)
+		if (options->vertical == 0 && nl == 1 && options->fulldata == 0)
 			printf("\n");
 		if ((printdata->countdir - count) > 1)
 			printf("\n");
 		h = h->next, count++;
 	} return (count);
+}
+
+/**
+ * printLongListing - print using a long listing format
+ * @sb: struct
+ * @name: name of file
+ * @p: path
+ */
+void printLongListing(struct stat sb, char *name, char *p)
+{
+	struct passwd *usr = getpwuid(sb.st_uid);
+	struct group *grp = getgrgid(sb.st_gid);
+
+	printf("%c%c%c%c%c%c%c%c%c%c %-*lu ",
+		S_ISDIR(sb.st_mode) ? 'd' : S_ISLNK(sb.st_mode) ? 'l' : '-',
+		RUSR, WUSR, XUSR, RGRP, WGRP, XGRP, ROTH, WOTH, XOTH,
+		0, sb.st_nlink);
+
+	if (usr)
+		printf("%-*s ", 0, usr->pw_name);
+	else
+		printf("%*u ", 0, sb.st_uid);
+
+	if (grp)
+		printf("%-*s ", 1, grp->gr_name);
+	else
+		printf("%*u ", 1, sb.st_gid);
+
+	printf("%*lu %s %s", 0,
+		sb.st_size, sprint_time(sb), name);
+	if (S_ISLNK(sb.st_mode))
+	{
+		char buf[256] = {0};
+
+		readlink(p, buf, 256);
+		printf(" -> %s", buf);
+	}
+	printf("\n");
 }

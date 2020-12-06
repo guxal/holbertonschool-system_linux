@@ -26,6 +26,10 @@ void setOptions(option_t *option, char *param)
 				option->fullhidden = 1;
 				break;
 
+			case 'l':
+				option->fulldata = 1;
+				break;
+
 			default:
 				/**error mal parametro */
 				fprintf(stderr, "hls: invalid option -- '%c'\n", *param);

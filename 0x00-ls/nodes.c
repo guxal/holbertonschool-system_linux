@@ -1,12 +1,15 @@
 #include "hls.h"
 
+
 /**
  * add_node_listfile - add node to listfile
  * @head: listfile header
  * @file: name of file
+ * @sb: struct with metadata
  * Return: Success (listfile_t)
  */
-listfile_t *add_node_listfile(listfile_t **head, const char *file)
+listfile_t *add_node_listfile(listfile_t **head, const char *file,
+	lstat_t sb)
 {
 	listfile_t *new;
 
@@ -17,6 +20,7 @@ listfile_t *add_node_listfile(listfile_t **head, const char *file)
 	if (new == NULL)
 		return (NULL);
 	new->file = _strdup(file);
+	new->sb = sb;
 	new->next = *head;
 	*head = new;
 
@@ -64,7 +68,7 @@ unsigned int buildNodes(char *p, printdata_t *printdata)
 	if (S_ISREG(st.st_mode))
 	{
 		/* agrega el file a printdata.listfile */
-		add_node_listfile(&printdata->listfile, p), printdata->countfile++;
+		add_node_listfile(&printdata->listfile, p, st), printdata->countfile++;
 		return (0);
 	}
 	dir = opendir(p);/* open dir */
