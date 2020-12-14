@@ -2,8 +2,6 @@
 #define _HLS_H_
 /*--- C libs ---*/
 #include <stdio.h>
-#include <string.h>
-#include <unistd.h>
 #include <stdlib.h>
 
 /**

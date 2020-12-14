@@ -45,12 +45,12 @@ Nascar *add_node(Nascar **head, const int id)
  */
 void print_race_state(Nascar *head)
 {
-	printf("Race state:\n");
 	Nascar *tmp = head;
 
+	printf("Race state:\n");
 	while (tmp != NULL)
 	{
-		printf("Car %d [%zu laps]\n", tmp->id, tmp->laps);
+		printf("Car %d [%lu laps]\n", tmp->id, tmp->laps);
 		tmp = tmp->next;
 	}
 }
@@ -73,9 +73,9 @@ void print_newcar(Nascar **head, int i)
  */
 void race_state(int *id, size_t size)
 {
+	size_t i;
 	static Nascar *head;
 	Nascar *free_tmp;
-
 
 	if (!size)
 	{
@@ -87,7 +87,7 @@ void race_state(int *id, size_t size)
 	}
 	if (head == NULL)
 	{
-		for (size_t i = 0; i < size; i++)
+		for (i = 0; i < size; i++)
 			print_newcar(&head, id[i]);
 		print_race_state(head);
 	} else
@@ -95,7 +95,7 @@ void race_state(int *id, size_t size)
 		Nascar *tmp = head;
 		int exist;
 
-		for (size_t i = 0; i < size; i++)
+		for (i = 0; i < size; i++)
 		{
 			exist = 0;
 			while (tmp != NULL)
