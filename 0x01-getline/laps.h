@@ -20,5 +20,6 @@ typedef struct nascar
 
 
 void race_state(int *id, size_t size);
+void new_nascar(Nascar **head, int id);
 
 #endif

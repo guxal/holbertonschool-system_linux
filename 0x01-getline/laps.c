@@ -1,114 +1,72 @@
 #include "laps.h"
 
 /**
- * insertsort - inserts linked list in a sorted order
- * @head: pointer to pointer of head node
- * @new: pointer to new node
- */
-void insertsort(Nascar **head, Nascar *new)
-{
-	Nascar **cur;
-
-	cur = head;
-	while (*cur && new->id > (*cur)->id)
-		cur = &(*cur)->next;
-	new->next = *cur;
-	*cur = new;
-}
-
-/**
- * *add_node - add node in list
- * @head: head
- * @id: id new car
- * Return: Nascar struct
- */
-Nascar *add_node(Nascar **head, const int id)
-{
-	Nascar *new;
-
-	if (head == NULL)
-		return (NULL);
-	new = malloc(sizeof(Nascar));
-	if (new == NULL)
-		return (NULL);
-
-	new->id = id;
-	new->laps = 0;
-	/* new->next = *head; *head = new; */
-	insertsort(head, new);
-	return (new);
-}
-
-/**
- * print_race_state - print race state
- * @head: head node
- */
-void print_race_state(Nascar *head)
-{
-	Nascar *tmp = head;
-
-	printf("Race state:\n");
-	while (tmp != NULL)
-	{
-		printf("Car %d [%lu laps]\n", tmp->id, tmp->laps);
-		tmp = tmp->next;
-	}
-}
-
-/**
- * print_newcar - print new car string
- * @head: head node
- * @i: index new card
- */
-void print_newcar(Nascar **head, int i)
-{
-	add_node(head, i);
-	printf("Car %d Joined the race\n", i);
-}
-
-/**
- * race_state - race state
- * @id: list of lists the id uniq
- * @size: size lists
+ * race_state - print race
+ * @id: the cars id
+ * @size: the number of cars in the race
+ * Return: void
  */
 void race_state(int *id, size_t size)
 {
 	size_t i;
+	Nascar *_nascar;
+
 	static Nascar *head;
-	Nascar *free_tmp;
 
-	if (!size)
+	if (size == 0)
 	{
-		while (head)
+		while (head != NULL)
 		{
-			free_tmp = head, head = head->next;
-			free(free_tmp);
-		} return;
-	}
-	if (head == NULL)
-	{
-		for (i = 0; i < size; i++)
-			print_newcar(&head, id[i]);
-		print_race_state(head);
-	} else
-	{
-		Nascar *tmp = head;
-		int exist;
-
-		for (i = 0; i < size; i++)
-		{
-			exist = 0;
-			while (tmp != NULL)
-			{
-				if (tmp->id == id[i])
-					exist = 1, tmp->laps++;
-				tmp = tmp->next;
-			} tmp = head;
-			if (exist == 0)
-				print_newcar(&head, id[i]);
+			_nascar = head;
+			head = head->next;
+			free(_nascar);
 		}
-		print_race_state(head);
+		return;
 	}
+	for (i = 0; i < size; i++)
+		new_nascar(&head, id[i]);
+
+	printf("Race state:\n");
+	for (_nascar = head; _nascar != NULL; _nascar = _nascar->next)
+		printf("Car %d [%lu laps]\n", _nascar->id, _nascar->laps);
 }
 
+/**
+ * new_nascar - add a new car to the race
+ * @head: the head of the linked list
+ * @id: the id of the new car to add
+ * Return: void
+ */
+void new_nascar(Nascar **head, int id)
+{
+	Nascar *_nascar, *t_nascar;
 
+	if (*head == NULL || id < (*head)->id)
+	{
+		_nascar = malloc(sizeof(Nascar));
+		if (_nascar == NULL)
+			exit(EXIT_FAILURE);
+		_nascar->id = id;
+		_nascar->laps = 0;
+		_nascar->next = *head;
+		*head = _nascar;
+		printf("Car %d joined the race\n", id);
+		return;
+	}
+	_nascar = *head;
+	while (_nascar->next && _nascar->next->id <= id)
+		_nascar = _nascar->next;
+	if (_nascar->id == id)
+	{
+		_nascar->laps++;
+		return;
+	}
+	t_nascar = malloc(sizeof(Nascar));
+	if (t_nascar == NULL)
+		exit(EXIT_FAILURE);
+	t_nascar->id = id;
+	t_nascar->laps = 0;
+	t_nascar->next = _nascar->next;
+	_nascar->next = t_nascar;
+	printf("Car %d joined the race\n", id);
+}
