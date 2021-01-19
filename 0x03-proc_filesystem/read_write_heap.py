@@ -103,7 +103,7 @@ for line in maps_file:
         print("Can't find '{}'".format(search_string))
         maps_file.close()
         mem_file.close()
-        exit(0)
+        exit(1)
     print("[*] Found '{}' at {:x}".format(search_string, i))
 
     # write the new string
