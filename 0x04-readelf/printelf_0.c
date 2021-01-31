@@ -11,7 +11,7 @@ int printversion(char *ident, char *str)
 {
 	if (ident[EI_VERSION] == EV_NONE)
 	{
-		fprintf(stderr, "Error: Invalid ELF version\n", str);
+		fprintf(stderr, "%s: Error: Invalid ELF version\n", str);
 		return (1);
 	}
 	printf("%9s%-28c%i (current)\n", "Version", ':', EV_CURRENT);
