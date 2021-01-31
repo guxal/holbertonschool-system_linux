@@ -21,7 +21,7 @@ void printshentsize(Elf64_Half shentsize64)
 
 void printphnum(Elf64_Half phnum64)
 {
-	printf("%27s%-10c%i\n", "Number of program headers", ':', 
+	printf("%27s%-10c%i\n", "Number of program headers", ':',
 			phnum64);
 }
 
@@ -59,91 +59,9 @@ void printentry(Elf64_Addr entry64)
 
 void printfileversion(Elf64_Word version)
 {
-	printf("%9s%-28c%#x\n", "Version", ':', 
+	printf("%9s%-28c%#x\n", "Version", ':',
 	version == EV_NONE ? EV_NONE : EV_CURRENT);
 }
-
-void printinstruction(instruction_t instruct[], int size, Elf64_Half match)
-{
-	int i;
-	int m = 0;
-
-	for (i = 0; i < size; i++)
-	{
-		if (instruct[i].code == match)
-		{
-			printf("%s\n", instruct[i].str);
-			m = 1;
-			break;
-		}
-	}
-
-	if (m != 1)
-		printf("%s\n", instruct[0].str);
-}
-
-void printmachine(Elf64_Half machine)
-{
-	instruction_t machines[] = {
-	{ EM_NONE, "No machine" },
-	{ EM_M32, "AT&T WE 32100" },
-	{ EM_SPARC, "Sparc" },
-	{ EM_386, "Intel 80386" },
-	{ EM_88K, "Motorola m88k family" },
-	{ EM_860, "Intel 80860" },
-	{ EM_MIPS, "MIPS R3000 big-endian" },
-	{ EM_PARISC, "HPPA" },
-	{ EM_SPARC32PLUS, "Sun's \"v8plus\"" },
-	{ EM_PPC, "PowerPC" },
-	{ EM_PPC64, "PowerPC 64-bit" },
-	{ EM_S390, "IBM S390" },
-	{ EM_ARM, "ARM" },
-	{ EM_SH, "Hitachi SH" },
-	{ EM_SPARCV9, "SPARC v9 64-bit"},
-	{ EM_IA_64, "Intel Merced" },
-	{ EM_X86_64, "Advanced Micro Devices X86-64" },
-	{ EM_VAX, "Digital VAX" }
-	};
-
-	printf("%9s%-28c", "Machine", ':');
-	printinstruction(machines, 18, machine);
-}
-
-void printtype(Elf64_Half type)
-{
-	instruction_t types[] = {
-	{ ET_NONE, "NONE (No file type)"},
-	{ ET_REL, "REL (Relocatable file)" },
-	{ ET_EXEC, "EXEC (Executable file)" },
-	{ ET_DYN, "DYN (Shared object file)" },
-	{ ET_CORE, "CORE (Core file)" }
-	};
-
-	printf("%6s%-31c", "Type", ':');
-	printinstruction(types, 5, type);
-}
-
-
-void printosabi(char *ident)
-{
-	instruction_t osabi[] = {
-	// { 0, printf("<unknown: %x>\n", ident[EI_OSABI]) },
-	{ ELFOSABI_NONE, "UNIX - System V" },
-	{ ELFOSABI_HPUX, "UNIX - HP-UX" },
-	{ ELFOSABI_NETBSD, "UNIX - NetBSD" },
-	{ ELFOSABI_LINUX, "UNIX - Linux" },
-	{ ELFOSABI_SOLARIS, "UNIX - Solaris" },
-	{ ELFOSABI_IRIX, "UNIX - SGI Irix" },
-	{ ELFOSABI_FREEBSD, "UNIX - Compaq TRU64" },
-	{ ELFOSABI_ARM, "UNIX - ARM" }
-	};
-	printf("%8s%-29c", "OS/ABI", ':');
-	printinstruction(osabi, 8, ident[EI_OSABI]);
-	printf("%14s%24i\n", "ABI Version:", ident[EI_ABIVERSION]);
-}
-
-
-
 
 
 FILE *get_fd(char *name)

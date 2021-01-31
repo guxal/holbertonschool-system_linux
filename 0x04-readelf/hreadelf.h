@@ -23,9 +23,15 @@ typedef struct instruction_s
 	char *str;
 } instruction_t;
 
-
+/* printelf_1 */
+void printinstruction(instruction_t instruct[], int size, Elf64_Half match);
+void printmachine(Elf64_Half machine);
+void printtype(Elf64_Half type);
+void printosabi(char *ident);
+/* printelf_0 */
 int printversion(char *ident, char *str);
 int printdata(char *ident, char *str);
 int printclass(char *ident, char *str);
 void _printmag(char *ident);
+
 #endif
