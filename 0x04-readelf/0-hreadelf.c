@@ -1,16 +1,5 @@
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <elf.h>
+# include "hreadelf.h"
 
-typedef struct instruction_s
-{
-	int code;
-	char *str;
-} instruction_t;
 
 void printshstrndx(Elf64_Half shstrndx64)
 {
@@ -74,10 +63,27 @@ void printfileversion(Elf64_Word version)
 	version == EV_NONE ? EV_NONE : EV_CURRENT);
 }
 
+void printinstruction(instruction_t instruct[], int size, Elf64_Half match)
+{
+	int i;
+	int m = 0;
+
+	for (i = 0; i < size; i++)
+	{
+		if (instruct[i].code == match)
+		{
+			printf("%s\n", instruct[i].str);
+			m = 1;
+			break;
+		}
+	}
+
+	if (m != 1)
+		printf("%s\n", instruct[0].str);
+}
 
 void printmachine(Elf64_Half machine)
 {
-	int i;
 	instruction_t machines[] = {
 	{ EM_NONE, "No machine" },
 	{ EM_M32, "AT&T WE 32100" },
@@ -100,78 +106,47 @@ void printmachine(Elf64_Half machine)
 	};
 
 	printf("%9s%-28c", "Machine", ':');
-	for (i = 0; i < 18; i++)
-	{
-		if ( machines[i].code == machine)
-		printf("%s\n", machines[i].str);
-	}
+	printinstruction(machines, 18, machine);
 }
 
 void printtype(Elf64_Half type)
 {
+	instruction_t types[] = {
+	{ ET_NONE, "NONE (No file type)"},
+	{ ET_REL, "REL (Relocatable file)" },
+	{ ET_EXEC, "EXEC (Executable file)" },
+	{ ET_DYN, "DYN (Shared object file)" },
+	{ ET_CORE, "CORE (Core file)" }
+	};
+
 	printf("%6s%-31c", "Type", ':');
-	switch (type)
-	{
-		case ET_NONE:
-			puts("NONE (No file type)");
-			break;
-		case ET_REL:
-			puts("REL (Relocatable file)");
-			break;
-		case ET_EXEC:
-			puts("EXEC (Executable file)");
-			break;
-		case ET_DYN:
-			puts("DYN (Shared object file)");
-			break;
-		case ET_CORE:
-			puts("CORE (Core file)");
-	}
+	printinstruction(types, 5, type);
 }
 
 
 void printosabi(char *ident)
 {
+	instruction_t osabi[] = {
+	// { 0, printf("<unknown: %x>\n", ident[EI_OSABI]) },
+	{ ELFOSABI_NONE, "UNIX - System V" },
+	{ ELFOSABI_HPUX, "UNIX - HP-UX" },
+	{ ELFOSABI_NETBSD, "UNIX - NetBSD" },
+	{ ELFOSABI_LINUX, "UNIX - Linux" },
+	{ ELFOSABI_SOLARIS, "UNIX - Solaris" },
+	{ ELFOSABI_IRIX, "UNIX - SGI Irix" },
+	{ ELFOSABI_FREEBSD, "UNIX - Compaq TRU64" },
+	{ ELFOSABI_ARM, "UNIX - ARM" }
+	};
 	printf("%8s%-29c", "OS/ABI", ':');
-	switch (ident[EI_OSABI])
-	{
-		case ELFOSABI_NONE:
-			printf("UNIX - System V\n");
-			break;
-		case ELFOSABI_HPUX:
-			printf("UNIX - HP-UX\n");
-			break;
-		case ELFOSABI_NETBSD:
-			printf("UNIX - NetBSD\n");
-			break;
-		case ELFOSABI_LINUX:
-			printf("UNIX - Linux\n");
-			break;
-		case ELFOSABI_SOLARIS:
-			printf("UNIX - Solaris\n");
-			break;
-		case ELFOSABI_IRIX:
-			printf("UNIX - SGI Irix\n");
-			break;
-		case ELFOSABI_FREEBSD:
-			printf("UNIX - Compaq TRU64\n");
-			break;
-		case ELFOSABI_ARM:
-			printf("UNIX - ARM\n");
-			break;
-		//case ELFOSABI_STANDALONE:
-		//	printf("UNIX - Standalone (embedded) application\n");
-		//	break;
-		default:
-			printf("<unknown: %x>\n", ident[EI_OSABI]);
-	}
+	printinstruction(osabi, 8, ident[EI_OSABI]);
 	printf("%14s%24i\n", "ABI Version:", ident[EI_ABIVERSION]);
 }
 
 
-// -------------------
+/* ---------------- */
 
 
+/***/
 int printversion(char *ident, char *str)
 {
 	if (ident[EI_VERSION] == EV_NONE)
@@ -183,6 +158,7 @@ int printversion(char *ident, char *str)
 	return (0);
 }
 
+/***/
 int printdata(char *ident, char *str)
 {
 	if (ident[EI_DATA] == ELFDATANONE)
@@ -203,6 +179,7 @@ int printdata(char *ident, char *str)
 	return (0);
 }
 
+/***/
 int printclass(char *ident, char *str)
 {
 	if (ident[EI_CLASS] == ELFCLASSNONE)
@@ -221,6 +198,7 @@ int printclass(char *ident, char *str)
 	return (0);
 }
 
+/***/
 void _printmag(char *ident)
 {
 	size_t i;
@@ -231,10 +209,7 @@ void _printmag(char *ident)
 	putchar('\n');
 }
 
-
-
-
-//---------------------------------------
+/* ------------------------------- */
 
 FILE *get_fd(char *name)
 {
@@ -293,7 +268,7 @@ int printelfh(FILE *fp, char *args)
 	exit_stat = printversion(elf64.e_ident, args);
 	if (exit_stat)
 		return (1);
-	//
+	/* ------ */
 	printosabi(elf64.e_ident);
 	printtype(elf64.e_type);
 	printmachine(elf64.e_machine);
@@ -308,7 +283,6 @@ int printelfh(FILE *fp, char *args)
 	printshstrndx(elf64.e_shstrndx);
 	return (exit_stat);
 }
-
 
 /**
  * main - read elf file
@@ -330,44 +304,7 @@ int main(int argc, char **argv)
 	if (!fp)
 		return (1);
 
-
-//	test = fread(&elf64, sizeof(elf64.e_ident), 1, fp);
-//	printf("%li\n", test);
 	exit_stat = printelfh(fp, *argv);
 	return (exit_stat);
 }
-
-/*
-int main(int argc, char **argv)
-{
-	FILE *fp;
-	int exit_stat;
-	Elf64_Ehdr elf64;
-	Elf32_Ehdr elf32;
-	size_t test;
-	size_t i;
-
-	fp = fopen(argv[1], "rb");
-	test = fread(&elf64, sizeof(elf64.e_ident), 1, fp);
-
-	printf("%li\n", test);
-	test = fread(&elf32, sizeof(elf32.e_ident), 1, fp);
-	printf("%li\n", test);
-	test = ftell(fp);
-	rewind(fp);
-	printf("%li\n", test);
-	for(i = 0; i < EI_NIDENT; ++i)
-	//fp = parse_args(argc, argv);
-		printf("%02x ", elf64.e_ident[i]);
-	printf("\n");
-	printf("%s\n", elf64.e_ident);
-	printf("%s %d\n", ELFMAG, SELFMAG);
-//if (!fp)
-	printf("version: %d\n", EI_VERSION);
-	//	return (1);
-	printf("EI_OSABI: %d\n", EI_OSABI);
-	exit_stat = 1;*/
-	/* exit_stat = printelfh(fp, *argv); */
-	/*return (exit_stat);
-}*/
 
