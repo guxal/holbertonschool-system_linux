@@ -23,7 +23,7 @@ int printversion(unsigned char *ident, char *str)
  * @ident: containing elf information
  * @str: string containing name of program
  *
- * Return: 0 on success, otherwise 1
+ * Return: 0 on success, Error 1, is msb 2
  */
 int printdata(unsigned char *ident, char *str)
 {
@@ -41,6 +41,7 @@ int printdata(unsigned char *ident, char *str)
 	{
 		printf("%6s%-31c%s%s\n", "Data", ':', "2's complement, ",
 				"big endian");
+		return (2);
 	}
 	return (0);
 }
@@ -50,7 +51,7 @@ int printdata(unsigned char *ident, char *str)
  * @ident: containing elf information
  * @str: string containing name of program
  *
- * Return: 0 on success, otherwise 1
+ * Return: 0 on success, error 1, 32 is 2
  */
 int printclass(unsigned char *ident, char *str)
 {
@@ -62,6 +63,7 @@ int printclass(unsigned char *ident, char *str)
 	if (ident[EI_CLASS] == ELFCLASS32)
 	{
 		printf("%7s%-30c%s\n", "Class", ':', "ELF32");
+		return (2);
 	}
 	else
 	{

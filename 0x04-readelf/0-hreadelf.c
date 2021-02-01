@@ -1,5 +1,6 @@
 # include "hreadelf.h"
 
+
 /**
  * get_fd - get file descriptor
  * @name: name of filedescriptor get
@@ -9,14 +10,7 @@
 FILE *get_fd(char *name)
 {
 	FILE *fp;
-	struct stat sb;
 
-	stat(name, &sb);
-	if (!S_ISREG(sb.st_mode))
-	{
-		fprintf(stderr, "%s: Error: '%s': is not an ordinary file\n",
-			name, name);
-	}
 	fp = fopen(name, "rb");
 
 	if (!fp)
@@ -37,6 +31,7 @@ FILE *get_fd(char *name)
 int valid_args(int argc, char **argv)
 {
 	int status;
+	struct stat sb;
 
 	status = 1;
 	if (argc != 2)
@@ -46,6 +41,12 @@ int valid_args(int argc, char **argv)
 		return (0);
 	}
 
+	stat(argv[1], &sb);
+	if (!S_ISREG(sb.st_mode))
+	{
+		fprintf(stderr, "%s: Error: '%s': is not an ordinary file\n",
+			argv[0], argv[1]);
+	}
 	return (status);
 }
 
@@ -59,7 +60,7 @@ int printelfh(FILE *fp, char *args)
 {
 	Elf64_Ehdr elf64;
 	Elf32_Ehdr elf32;
-	int exit_stat;
+	int exit_stat, is32, ismsb;
 
 	fread(&elf64, sizeof(elf64), 1, fp);
 	rewind(fp);
@@ -71,16 +72,17 @@ int printelfh(FILE *fp, char *args)
 	}
 	puts("ELF Header:");
 	_printmag(elf64.e_ident);
-	exit_stat = printclass(elf64.e_ident, args);
-	if (exit_stat)
+	is32 = printclass(elf64.e_ident, args);
+	if (is32 == 1)
 		return (1);
-	exit_stat = printdata(elf64.e_ident, args);
-	if (exit_stat)
+	ismsb = printdata(elf64.e_ident, args);
+	if (ismsb == 1)
 		return (1);
 	exit_stat = printversion(elf64.e_ident, args);
 	if (exit_stat)
 		return (1);
 	/* ------ */
+	convert(elf64, ismsb);
 	printosabi(elf64.e_ident);
 	printtype(elf64.e_type);
 	printmachine(elf64.e_machine);

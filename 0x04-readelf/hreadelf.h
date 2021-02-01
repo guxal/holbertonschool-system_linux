@@ -22,7 +22,9 @@ typedef struct instruction_s
 	int code;
 	char *str;
 } instruction_t;
-
+/* convert */
+void convertmsb(char *ptr, size_t size);
+void convert(Elf64_Ehdr elf64, int ismsb);
 /* printelf_3 */
 void printshstrndx(Elf64_Half shstrndx64);
 void printshnum(Elf64_Half shnum64);
