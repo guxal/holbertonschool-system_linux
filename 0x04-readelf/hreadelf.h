@@ -23,6 +23,17 @@ typedef struct instruction_s
 	char *str;
 } instruction_t;
 
+/* printelf_3 */
+void printshstrndx(Elf64_Half shstrndx64);
+void printshnum(Elf64_Half shnum64);
+void printshentsize(Elf64_Half shentsize64);
+void printphnum(Elf64_Half phnum64);
+/* printelf_2 */
+void printhdrsize(Elf64_Ehdr elf64);
+void printflags(Elf64_Word flags64);
+void printpshoff(Elf64_Ehdr elf64);
+void printentry(Elf64_Addr entry64);
+void printfileversion(Elf64_Word version);
 /* printelf_1 */
 void printinstruction(instruction_t instruct[], int size, Elf64_Half match);
 void printmachine(Elf64_Half machine);

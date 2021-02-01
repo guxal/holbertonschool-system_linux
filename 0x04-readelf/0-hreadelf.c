@@ -1,69 +1,6 @@
 # include "hreadelf.h"
 
 
-void printshstrndx(Elf64_Half shstrndx64)
-{
-	printf("%35s%-2c%i\n", "Section header string table index",
-			':', shstrndx64);
-}
-
-void printshnum(Elf64_Half shnum64)
-{
-	printf("%27s%-10c%i\n", "Number of section headers", ':',
-			shnum64);
-}
-
-void printshentsize(Elf64_Half shentsize64)
-{
-	printf("%25s%-12c%i%s\n", "Size of section headers", ':',
-			shentsize64, " (bytes)");
-}
-
-void printphnum(Elf64_Half phnum64)
-{
-	printf("%27s%-10c%i\n", "Number of program headers", ':',
-			phnum64);
-}
-
-void printhdrsize(Elf64_Ehdr elf64)
-{
-	Elf64_Half ehsize64 = elf64.e_ehsize;
-	Elf64_Half phentsize64 = elf64.e_phentsize;
-
-	printf("%21s%-16c%i%s\n", "Size of this header", ':', ehsize64,
-			" (bytes)");
-	printf("%25s%-12c%i%s\n", "Size of program headers", ':',
-			phentsize64, " (bytes)");
-}
-
-void printflags(Elf64_Word flags64)
-{
-	printf("%7s%-30c0x%x\n", "Flags", ':', flags64);
-}
-
-void printpshoff(Elf64_Ehdr elf64)
-{
-	Elf64_Off phoff64 = elf64.e_phoff;
-	Elf64_Off shoff64 = elf64.e_shoff;
-
-	printf("%26s%-11c%li%s\n", "Start of program headers", ':',
-			phoff64, " (bytes into file)");
-	printf("%26s%-11c%li%s\n", "Start of section headers", ':',
-			shoff64, " (bytes into file)");
-}
-
-void printentry(Elf64_Addr entry64)
-{
-	printf("%21s%-16c0x%lx\n", "Entry point address", ':', entry64);
-}
-
-void printfileversion(Elf64_Word version)
-{
-	printf("%9s%-28c%#x\n", "Version", ':',
-	version == EV_NONE ? EV_NONE : EV_CURRENT);
-}
-
-
 FILE *get_fd(char *name)
 {
 	FILE *fp;
