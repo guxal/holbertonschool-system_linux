@@ -77,7 +77,7 @@ void printtype(Elf64_Half type)
  * printosabi - prints OS, ABI to which the object is targeted, and ABI version
  * @ident: elf osabi
  */
-void printosabi(char *ident)
+void printosabi(unsigned char *ident)
 {
 	instruction_t osabi[] = {
 	/* { 0, printf("<unknown: %x>\n", ident[EI_OSABI]) }, */

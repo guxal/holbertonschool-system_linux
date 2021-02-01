@@ -38,11 +38,11 @@ void printfileversion(Elf64_Word version);
 void printinstruction(instruction_t instruct[], int size, Elf64_Half match);
 void printmachine(Elf64_Half machine);
 void printtype(Elf64_Half type);
-void printosabi(char *ident);
+void printosabi(unsigned char *ident);
 /* printelf_0 */
-int printversion(char *ident, char *str);
-int printdata(char *ident, char *str);
-int printclass(char *ident, char *str);
-void _printmag(char *ident);
+int printversion(unsigned char *ident, char *str);
+int printdata(unsigned char *ident, char *str);
+int printclass(unsigned char *ident, char *str);
+void _printmag(unsigned char *ident);
 
 #endif

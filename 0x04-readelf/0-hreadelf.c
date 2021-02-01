@@ -1,11 +1,22 @@
 # include "hreadelf.h"
 
-
+/**
+ * get_fd - get file descriptor
+ * @name: name of filedescriptor get
+ *
+ * Return: FILE
+ */
 FILE *get_fd(char *name)
 {
 	FILE *fp;
 	struct stat sb;
 
+	stat(name, &sb);
+	if (!S_ISREG(sb.st_mode))
+	{
+		fprintf(stderr, "%s: Error: '%s': is not an ordinary file\n",
+			name, name);
+	}
 	fp = fopen(name, "rb");
 
 	if (!fp)
@@ -17,7 +28,12 @@ FILE *get_fd(char *name)
 	return (fp);
 }
 
-
+/**
+ * valid_args - valid arguments
+ * @argc: count args
+ * @argv: array with args
+ * Return: success 1, otherwise 0
+ */
 int valid_args(int argc, char **argv)
 {
 	int status;
@@ -33,6 +49,12 @@ int valid_args(int argc, char **argv)
 	return (status);
 }
 
+/**
+ * printelfh - print elf header
+ * @fp: file descriptor
+ * @args: array with args
+ * Return: success 1, otherwise 0
+ */
 int printelfh(FILE *fp, char *args)
 {
 	Elf64_Ehdr elf64;
@@ -78,13 +100,12 @@ int printelfh(FILE *fp, char *args)
  * main - read elf file
  * @argc: the count of args
  * @argv: the args
- */
+ * Return: success 1, otherwise 0
+*/
 int main(int argc, char **argv)
 {
 	FILE *fp;
 	int exit_stat;
-	Elf64_Ehdr elf64;
-	size_t test;
 
 	if (valid_args(argc, argv) == 0)
 		return (1);

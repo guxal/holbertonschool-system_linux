@@ -7,7 +7,7 @@
  *
  * Return: 0 on success, otherwise 1
  */
-int printversion(char *ident, char *str)
+int printversion(unsigned char *ident, char *str)
 {
 	if (ident[EI_VERSION] == EV_NONE)
 	{
@@ -25,11 +25,11 @@ int printversion(char *ident, char *str)
  *
  * Return: 0 on success, otherwise 1
  */
-int printdata(char *ident, char *str)
+int printdata(unsigned char *ident, char *str)
 {
 	if (ident[EI_DATA] == ELFDATANONE)
 	{
-		fprintf(stderr, "Error");
+		fprintf(stderr, "Error %s\n", str);
 		return (1);
 	}
 	if (ident[EI_DATA] == ELFDATA2LSB)
@@ -52,11 +52,11 @@ int printdata(char *ident, char *str)
  *
  * Return: 0 on success, otherwise 1
  */
-int printclass(char *ident, char *str)
+int printclass(unsigned char *ident, char *str)
 {
 	if (ident[EI_CLASS] == ELFCLASSNONE)
 	{
-		fprintf(stderr, "Error");
+		fprintf(stderr, "Error %s\n", str);
 		return (1);
 	}
 	if (ident[EI_CLASS] == ELFCLASS32)
@@ -74,7 +74,7 @@ int printclass(char *ident, char *str)
  * _printmag - prints the magic numbers
  * @ident: containing elf information
  */
-void _printmag(char *ident)
+void _printmag(unsigned char *ident)
 {
 	size_t i;
 
