@@ -1,6 +1,4 @@
 # include "hreadelf.h"
-
-
 /**
  * get_fd - get file descriptor
  * @name: name of filedescriptor get
@@ -21,7 +19,6 @@ FILE *get_fd(char *name)
 
 	return (fp);
 }
-
 /**
  * valid_args - valid arguments
  * @argc: count args
@@ -82,22 +79,18 @@ int printelfh(FILE *fp, char *args)
 	if (exit_stat)
 		return (1);
 	/* ------ */
-	convert(elf64, ismsb);
-	printosabi(elf64.e_ident);
-	printtype(elf64.e_type);
-	printmachine(elf64.e_machine);
-	printfileversion(elf64.e_version);
-	printentry(elf64.e_entry);
-	printpshoff(elf64);
-	printflags(elf64.e_flags);
-	printhdrsize(elf64);
-	printphnum(elf64.e_phnum);
-	printshentsize(elf64.e_shentsize);
-	printshnum(elf64.e_shnum);
-	printshstrndx(elf64.e_shstrndx);
+	if (is32)
+	{
+		convert32(elf32, ismsb);
+		printelf32h(elf32);
+	}
+	else
+	{
+		convert64(elf64, ismsb);
+		printelf64h(elf64);
+	}
 	return (exit_stat);
 }
-
 /**
  * main - read elf file
  * @argc: the count of args
