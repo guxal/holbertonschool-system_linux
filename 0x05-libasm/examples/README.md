@@ -1,6 +1,6 @@
 # Assembly
 
-> ## [Intro to x86 Assembly Language (Part 1)](https://www.youtube.com/watch?v=wLXIWKUWpSs)
+# [Intro to x86 Assembly Language (Part 1)](https://www.youtube.com/watch?v=wLXIWKUWpSs)
 
 ## Requirements
 
@@ -181,3 +181,161 @@ $5 = 1819043144
 - [assembly language debugging](https://mohit.io/blog/gdb-assembly-language-debugging-101/)
 - [examining memory MIT](http://web.mit.edu/gnu/doc/html/gdb_10.html)
 
+-----------------------------------------------------
+# [Intro to x86 Assembly Language (Part 2)](https://www.youtube.com/watch?v=cFGJhn97e3s)
+
+
+## JUMP
+
+`file:` ex3.asm
+```asm
+global _start
+
+section .text
+_start:
+    mov ebx, 42     ; exit status is 42
+    mov eax, 1      ; sys_exit system call
+    jmp skip        ; jump to "skip" label
+    mov ebx, 13     ; exit status is 13
+skip:
+    int 0x80
+```
+
+`disas`
+
+```bash
+# _start
+(gdb) disas /m _start
+Dump of assembler code for function _start:
+   0x08048060 <+0>:     mov    $0x2a,%ebx
+   0x08048065 <+5>:     mov    $0x1,%eax
+   0x0804806a <+10>:    jmp    0x8048071 <skip>
+   0x0804806c <+12>:    mov    $0xd,%ebx
+End of assembler dump.
+# skip
+(gdb) disas /m skip
+Dump of assembler code for function skip:
+   0x08048071 <+0>:     int    $0x80
+End of assembler dump.
+```
+
+`run`
+
+```bash
+$ ./ex3
+
+$ echo $?
+42
+```
+the condition not execute
+
+
+`file:` ex3_2.asm
+```asm
+global _start
+
+section .text
+_start:
+    mov ecx, 101    ; set ecx to 101
+    mov ebx, 20     ; exit status is 42
+    mov eax, 1      ; sys_exit system call
+    cmp ecx, 100    ; compare ecx to 100
+    jl skip         ;  jump if less than
+    mov ebx, 13     ; exit status is 13
+skip:
+    int 0x80
+```
+`disas`
+
+```bash
+# _start
+(gdb) disas /m _start
+Dump of assembler code for function _start:
+   0x08048060 <+0>:     mov    $0x65,%ecx
+   0x08048065 <+5>:     mov    $0x2a,%ebx
+   0x0804806a <+10>:    mov    $0x1,%eax
+   0x0804806f <+15>:    cmp    $0x64,%ecx
+   0x08048072 <+18>:    jl     0x8048079 <skip>
+   0x08048074 <+20>:    mov    $0xd,%ebx
+End of assembler dump.
+# skip
+(gdb) disas /m skip
+Dump of assembler code for function skip:
+   0x08048079 <+0>:     int    $0x80
+End of assembler dump.
+```
+
+`run`
+
+```bash
+$ ./ex3_2
+
+$ echo $?
+13
+```
+
+
+### JUMP VALUES
+
+```asm
+je    A, B ; Jump if Equal
+jne   A, B ; Jump if Not Equal
+jg    A, B ; Jump if Greater
+jge   A, B ; Jump if Greater or Equal
+jl    A, B ; Jump if Less
+jle   A, B ; Jump if Less or Equal
+```
+
+**Example** with operations and jumps
+
+- emulate a for or while
+
+`file:` ex4.asm
+```asm
+global _start
+
+section .text
+
+_start:
+    mov ebx, 1      ; start ebx at 1
+    mov ecx, 4      ; number of iterations
+label:
+    add ebx, ebx    ; ebx += ebx
+    dec ecx         ; ecx -= 1
+    cmp ecx, 0      ; compare ecx with 0
+    jg label        ; jump to label if greater
+    mov eax, 1      ; sys_exit system call
+    int 0x80
+```
+
+> `dec` is equal to `sub` but is more efficient
+
+`disas`
+
+```bash
+# _start
+(gdb) disas /m _start
+Dump of assembler code for function _start:
+   0x08048060 <+0>:     mov    $0x1,%ebx
+   0x08048065 <+5>:     mov    $0x4,%ecx
+End of assembler dump.
+# label
+(gdb) disas /m label
+Dump of assembler code for function label:
+   0x0804806a <+0>:     add    %ebx,%ebx
+   0x0804806c <+2>:     dec    %ecx
+   0x0804806d <+3>:     cmp    $0x0,%ecx
+   0x08048070 <+6>:     jg     0x804806a <label>
+   0x08048072 <+8>:     mov    $0x1,%eax
+   0x08048077 <+13>:    int    $0x80
+End of assembler dump.
+```
+
+`run`
+
+```bash
+$ ./ex4
+
+$ echo $?
+16
+```
