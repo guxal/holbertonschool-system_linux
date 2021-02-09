@@ -15,5 +15,5 @@ void main()
 {
 	const char *h = "HOLBERTON";
 
-	printf("len: %li", _strlen(h));
+	printf("len: %li\n", _strlen(h));
 }
