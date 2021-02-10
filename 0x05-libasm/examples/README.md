@@ -339,3 +339,203 @@ $ ./ex4
 $ echo $?
 16
 ```
+-----------------------------------------------------
+# [Intro to x86 Assembly Language (Part 3)](https://www.youtube.com/watch?v=_UP7WJ8iODY)
+
+## Print string without newline
+
+`file:` ex5_not_newline.asm
+```asm
+global _start
+
+section .data
+	addr db "yellow"
+section .text
+_start:
+	mov eax, 4		; sys_write system call
+	mov ebx, 1		; stdout file descriptor
+	mov ecx, addr	; bytes to write
+	mov edx, 6		; number of bytes to write
+	int 0x80		; perfom system call
+	mov eax, 1		; sys_exit system call
+	mov ebx, 0		; exit status is 0
+	int 0x80
+```
+
+`disas`
+
+```bash
+(gdb) disas /m _start
+Dump of assembler code for function _start:
+   0x08048080 <+0>:     mov    $0x4,%eax
+   0x08048085 <+5>:     mov    $0x1,%ebx
+   0x0804808a <+10>:    mov    $0x80490a4,%ecx
+   0x0804808f <+15>:    mov    $0x6,%edx
+   0x08048094 <+20>:    int    $0x80
+   0x08048096 <+22>:    mov    $0x1,%eax
+   0x0804809b <+27>:    mov    $0x0,%ebx
+   0x080480a0 <+32>:    int    $0x80
+End of assembler dump.
+```
+
+`run`
+
+```bash
+$ ./ex5_not_newline
+
+$ yellow$
+```
+
+- print without newline
+
+
+## Print string with newline
+
+
+Add this 
+
+```asm
+addr db "yellow", 0x0a
+
+; and change number of bytes in start to 7
+
+mov edx, 7
+```
+
+`file:` ex5_newline.asm
+```asm
+global _start
+
+section .data
+	addr db "yellow", 0x0a
+section .text
+_start:
+	mov eax, 4		; sys_write system call
+	mov ebx, 1		; stdout file descriptor
+	mov ecx, addr	; bytes to write
+	mov edx, 7		; number of bytes to write
+	int 0x80		; perfom system call
+	mov eax, 1		; sys_exit system call
+	mov ebx, 0		; exit status is 0
+	int 0x80
+```
+
+`disas`
+
+```bash
+(gdb) disas /m _start
+Dump of assembler code for function _start:
+   0x08048080 <+0>:     mov    $0x4,%eax
+   0x08048085 <+5>:     mov    $0x1,%ebx
+   0x0804808a <+10>:    mov    $0x80490a4,%ecx
+   0x0804808f <+15>:    mov    $0x7,%edx
+   0x08048094 <+20>:    int    $0x80
+   0x08048096 <+22>:    mov    $0x1,%eax
+   0x0804809b <+27>:    mov    $0x0,%ebx
+   0x080480a0 <+32>:    int    $0x80
+End of assembler dump.
+```
+
+`run`
+
+```bash
+$ ./ex5_newline
+
+$ yellow
+$
+```
+
+
+## Change char
+
+Add this 
+
+```asm
+      ; change bytes in addr var
+      mov [addr], byte 'H'
+      mov [addr+5], byte '!'
+```
+
+`file:` ex5_change_char.asm
+```asm
+global _start
+
+section .data
+	addr db "yellow", 0x0a
+section .text
+_start:
+	mov [addr], byte 'H'
+	mov [addr+5], byte '!'
+	mov eax, 4		; sys_write system call
+	mov ebx, 1		; stdout file descriptor
+	mov ecx, addr	; bytes to write
+	mov edx, 7		; number of bytes to write
+	int 0x80		; perfom system call
+	mov eax, 1		; sys_exit system call
+	mov ebx, 0		; exit status is 0
+	int 0x80
+```
+
+`disas`
+
+```bash
+(gdb) disas /m _start
+Dump of assembler code for function _start:
+   0x08048080 <+0>:     movb   $0x48,0x80490b0
+   0x08048087 <+7>:     movb   $0x21,0x80490b5
+   0x0804808e <+14>:    mov    $0x4,%eax
+   0x08048093 <+19>:    mov    $0x1,%ebx
+   0x08048098 <+24>:    mov    $0x80490b0,%ecx
+   0x0804809d <+29>:    mov    $0x7,%edx
+   0x080480a2 <+34>:    int    $0x80
+   0x080480a4 <+36>:    mov    $0x1,%eax
+   0x080480a9 <+41>:    mov    $0x0,%ebx
+   0x080480ae <+46>:    int    $0x80
+End of assembler dump.
+```
+
+`run`
+
+```bash
+$ ./ex5_change_char
+
+$ Hello!
+$
+```
+
+this is similar to 
+
+
+```c
+char *str = "yellow\n";
+
+str[0] = 'H';
+str[5] = '!';
+
+printf("%s", str);
+// Hello!
+```
+
+## DATA TYPES
+
+```asm
+section .data
+      ; db is 1 byte
+      name1 db "string"
+      name2 db 0xff
+      name3 db 100
+      ; dw is 2 bytes
+      name4 dw 1000
+      ; dd is 4 bytes
+      name6 100000
+```
+
+### STACK
+
+- LIFO data structure
+- Is an array
+- Stack Pointer (register)
+- Random access
+
+ESP -> Stack Pointer
+
