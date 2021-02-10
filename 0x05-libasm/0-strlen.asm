@@ -13,4 +13,3 @@ asm_strlen:
 	jnz		?_001
 ?_002:
 	ret
-
