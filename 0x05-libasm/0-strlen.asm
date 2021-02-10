@@ -6,13 +6,13 @@ section .text
 asm_strlen:
 	xor		eax, eax
 	cmp		byte [rdi+rax], 0
-	jz		?_002
+	jz		end
 
-?_001:
+loop:
 	add		rax, 1
 	cmp		byte [rdi+rax], 0
-	jnz		?_001
-?_002:
+	jnz		loop
+end:
 	ret
 
 ; vi: set noet ft=nasm sts=0 sw=8 ts=8
