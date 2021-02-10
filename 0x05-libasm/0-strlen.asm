@@ -1,7 +1,7 @@
 BITS 64
 	global asm_strlen	; export 'asm_strlen' function
 
-section .text
+	section .text
 
 asm_strlen:
 	xor		eax, eax
