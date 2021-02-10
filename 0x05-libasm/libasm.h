@@ -20,3 +20,4 @@ size_t asm_puti(int n);
 size_t asm_puti_base(int n, const char *base);
 
 #endif /* LIBASM_H */
+
