@@ -13,3 +13,5 @@ asm_strlen:
 	jnz		?_001
 ?_002:
 	ret
+
+; vi: set noet ft=nasm sts=0 sw=8 ts=8
