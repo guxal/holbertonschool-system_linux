@@ -23,4 +23,3 @@ int main(void)
     printf("All good!\n");
     return (EXIT_SUCCESS);
 }
-
