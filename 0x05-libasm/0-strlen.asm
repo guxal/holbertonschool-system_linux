@@ -1,17 +1,17 @@
 BITS 64
-	global asm_strlen	; export 'asm_strlen' function
+	global asm_strlen ; export 'asm_strlen' function
 
 	section .text
 
 asm_strlen:
-	xor		eax, eax
-	cmp		byte [rdi+rax], 0
-	jz		end
+	xor eax, eax
+	cmp byte [rdi+rax], 0
+	jz end
 
 loop:
-	add		rax, 1
-	cmp		byte [rdi+rax], 0
-	jnz		loop
+	add rax, 1
+	cmp byte [rdi+rax], 0
+	jnz loop
 end:
 	ret
 
