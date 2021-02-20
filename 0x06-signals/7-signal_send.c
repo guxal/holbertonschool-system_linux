@@ -1,6 +1,11 @@
 #include "signals.h"
 
-
+/**
+ * main - program to send SIGINT to a process
+ * @argc: argument count
+ * @argv: argument vector
+ * Return: EXIT_SUCCESS or EXIT_FAILURE
+ */
 int main(int argc, char *argv[])
 {
 	pid_t pid;
