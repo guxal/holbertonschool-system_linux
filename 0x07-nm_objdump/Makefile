@@ -2,17 +2,17 @@ CC 		= gcc-4.8
 CFLAGS 	= -Wall -Werror -Wextra -pedantic -g
 
 _SRC 	= nm.c \
-		= elf_utils.c \
-		= elf_utils_1.c \
-		= elf_print.c \
-		= elf_functions_32.c \
-		= elf_functions_64.c \
-		= elf_symbols_tables.c
+		  elf_utils.c \
+		  elf_utils_1.c \
+		  elf_print.c \
+		  elf_functions_32.c \
+		  elf_functions_64.c \
+		  elf_symbols_tables.c
 
-SRC 	= $(patsubst %,$(SDIR)/%,$(_SRC))
+SRC 	= $(patsubst %,%,$(_SRC))
 
 _OBJ	= $(_SRC:.c=.o)
-OBJECTS = $(patsubst %,$(ODIR)/%,$(_OBJ))
+OBJECTS = $(patsubst %,%,$(_OBJ))
 
 IDIR	= .
 SDIR	= .
@@ -20,7 +20,7 @@ ODIR	= .
 
 OUTPUT	= hnm
 
-$(ODIR)/%.o : $(SDIR)/%.c
+%.o : %.c
 		$(CC) $(CFLAGS) -c -o $@ $< -I$(IDIR)
 
 all : $(OUTPUT)
@@ -31,6 +31,6 @@ $(OUTPUT) : $(OBJECTS)
 .PHONY : clean
 
 clean :
-	rm -f $(OUTPUT) $(OBJECTS)
+	rm *.o
 
 re: $(OBJ)

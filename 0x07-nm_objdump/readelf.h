@@ -125,5 +125,8 @@ void read_elf_header_32(ElfN_Ehdr *ehdr, FILE *file);
 void read_elf_sh_32(ElfN_Ehdr ehdr, ElfN_Shdr *sh_tbl, int fd);
 void read_elf_st_32(ElfN_Ehdr ehdr, ElfN_Shdr shdr, ElfN_Sym *sym_tbl, int fd);
 
-
+int read_elf_stN(ElfN_Ehdr *ehdr, FILE *file, int arch);
+void print_elf_symbol_table(ElfN_Shdr sh_tbl[], ElfN_Sym sym_tbl[],
+			    ElfN_Ehdr ehdr, uint64_t count,
+			    int fd);
 #endif
