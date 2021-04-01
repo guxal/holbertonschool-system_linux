@@ -14,12 +14,12 @@
 #include <ctype.h>
 #include <math.h>
 
-
+#define _F(f, t, r) printf("%s%s", r && (f & t) ? ", " : "", f & t ? #t : "")
 #define GET_BYTE(field) get_byte(field, sizeof(field))
 #define ELF_ST_BIND(x) ((x) >> 4)
 #define ELF_ST_TYPE(x) (((unsigned int) x) & 0xf)
 #define E "Error: Not an ELF file - it has the wrong magic bytes at the start"
-
+#define SPACE {print_char(' '); print_char(' '); }
 /**
  * struct ehdr - Struct to represent headers from both 32 and 64bits files
  * @e_ident : magic number
@@ -104,6 +104,33 @@ typedef struct symtab
 	uint64_t st_size;
 } ElfN_Sym;
 
+/**
+ * enum flags- enum of flags for an elf
+ * @BFD_NO_FLAGS: No flags
+ * @HAS_RELOC: Has REL AND RELA types
+ * @HAS_DEBUG: NOt implemented yet
+ * @EXEC_P: Is exec
+ * @HAS_LINENO: not implemented yet
+ * @HAS_SYMS: Has symbols
+ * @HAS_LOCAL: Has local variables
+ * @DYNAMIC: Has dynamic content
+ * @WP_TEXT: not implemented yet
+ * @D_PAGED: Is dynamic paged
+ */
+enum flags
+{
+	BFD_NO_FLAGS = 0,
+	HAS_RELOC    = 1,
+	EXEC_P       = 2,
+	HAS_LINENO   = 4,
+	HAS_DEBUG    = 8,
+	HAS_SYMS     = 16,
+	HAS_LOCAL    = 32,
+	DYNAMIC      = 64,
+	WP_TEXT      = 128,
+	D_PAGED      = 256
+};
+
 /* utils */
 uint64_t get_byte_big_endian(uint64_t data, int size);
 uint64_t get_byte_host(uint64_t data, int size);
@@ -125,8 +152,30 @@ void read_elf_header_32(ElfN_Ehdr *ehdr, FILE *file);
 void read_elf_sh_32(ElfN_Ehdr ehdr, ElfN_Shdr *sh_tbl, int fd);
 void read_elf_st_32(ElfN_Ehdr ehdr, ElfN_Shdr shdr, ElfN_Sym *sym_tbl, int fd);
 
+bool elf_check_file(unsigned char *magic);
+bool get_architecture(char c, int *arch);
+
+
 int read_elf_stN(ElfN_Ehdr *ehdr, FILE *file, int arch);
 void print_elf_symbol_table(ElfN_Shdr sh_tbl[], ElfN_Sym sym_tbl[],
 			    ElfN_Ehdr ehdr, uint64_t count,
 			    int fd);
+
+/* */
+void read_elf_section_header_N(ElfN_Ehdr *ehdr, FILE *file, int arch,
+								char *filename);
+
+char *get_arch_mach_name(unsigned int e_machine);
+char *get_file_format_name(ElfN_Ehdr ehdr);
+int get_flags(ElfN_Ehdr *ehdr, ElfN_Shdr sh_tbl[], int fd);
+
+void read_elf_section_header_N(ElfN_Ehdr *ehdr,
+FILE *file, int arch, char *filename);
+
+void print_elf_section_header(ElfN_Shdr sh_tbl[], ElfN_Ehdr ehdr, int fd);
+
+void print_buffer(char *b, int size, uint64_t address);
+bool display_section(uint32_t type, ElfN_Ehdr ehdr,
+ElfN_Shdr shdr, char *str_tbl);
+
 #endif

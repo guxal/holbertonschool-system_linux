@@ -50,3 +50,33 @@ ElfN_Ehdr ehdr, uint64_t count, int fd)
 	}
 }
 
+void print_elf_section_header(ElfN_Shdr sh_tbl[],
+	ElfN_Ehdr ehdr, int fd)
+{
+	int i = 0;
+	char *str_tbl;
+	char *content;
+	uint64_t address;
+	uint16_t type;
+
+	if (ehdr.e_shnum == 0)
+	{
+		printf("There are no sections in this file.\n");
+		return;
+	}
+
+	str_tbl = read_section(fd, sh_tbl[ehdr.e_shstrndx]);
+	for (i = 0; i < ehdr.e_shnum; i++)
+	{
+		type = sh_tbl[i].sh_type;
+		if (display_section(type, ehdr, sh_tbl[i], str_tbl))
+		{
+			printf("Contents of section %s:\n",
+					str_tbl + sh_tbl[i].sh_name);
+			fflush(stdout);
+			content = read_section(fd, sh_tbl[i]);
+			address = sh_tbl[i].sh_addr;
+			print_buffer(content, sh_tbl[i].sh_size, address);
+		}
+	}
+}
