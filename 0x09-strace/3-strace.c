@@ -54,6 +54,7 @@ void trace_sysfull(pid_t pid)
 			break;
 		print_sys(RET, regs, pid);
 	}
+	print_sys(RET, regs, pid);
 }
 
 
